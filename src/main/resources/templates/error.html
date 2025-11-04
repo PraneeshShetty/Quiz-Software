@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .error-container {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 30px;
+        }
+        h1 { color: #dc3545; }
+        .error-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h1>An Error Occurred</h1>
+    <div class="error-details">
+        <p><strong>Status:</strong> <span th:text="${status}">500</span></p>
+        <p><strong>Error:</strong> <span th:text="${error}">Internal Server Error</span></p>
+        <p><strong>Message:</strong> <span th:text="${message}">An unexpected error occurred</span></p>
+        <p><strong>Path:</strong> <span th:text="${path}">/</span></p>
+    </div>
+    <p style="margin-top: 20px;">
+        <a href="/" style="color: #007bff; text-decoration: none;">← Return to Home</a>
+    </p>
+</div>
+</body>
+</html>

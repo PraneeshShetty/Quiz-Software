@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Quiz App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background:#f5f5f5; }
+        header { background:#0d6efd; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+        .container { max-width: 1100px; margin: 24px auto; background:#fff; padding: 20px; border-radius:8px; box-shadow: 0 4px 18px rgba(0,0,0,.08);} 
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse: collapse; min-width: 720px; }
+        th, td { text-align:left; padding:10px; border-bottom:1px solid #eee; }
+        .btn { padding:8px 12px; background:#16a34a; color:#fff; border:none; border-radius:6px; text-decoration:none; cursor:pointer; }
+        .btn:disabled { background:#9ca3af; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; }
+        .badge.warn { background:#fee2e2; color:#b91c1c; }
+        .muted { color:#6b7280; }
+        @media (max-width: 640px) {
+            .container { margin: 12px; padding: 14px; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h2>Admin Panel</h2>
+    <div>
+        <a href="/logout" class="btn" style="background:#dc2626;">Logout</a>
+    </div>
+</header>
+<div class="container">
+    <h3>Auto-submitted Results</h3>
+    <p class="muted">These attempts were auto-submitted due to Safe Browsing Mode violations.</p>
+    <div class="table-wrap">
+      <table>
+          <thead>
+              <tr>
+                  <th>User Email</th>
+                  <th>Submitted At</th>
+                  <th>Reason</th>
+                  <th>Score</th>
+                  <th>Approve Retake</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr th:each="r : ${autoResults}">
+                  <td th:text="${usersById[r.userId] != null ? usersById[r.userId].email : 'Unknown'}"></td>
+                  <td th:text="${#temporals.format(r.submittedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                  <td><span class="badge warn" th:text="${r.autoReason}"></span></td>
+                  <td><span th:text="${r.correct}"></span>/<span th:text="${r.totalQuestions}"></span></td>
+                  <td>
+                      <form th:action="@{'/admin/reset/' + ${r.userId}}" method="post">
+                          <button class="btn" type="submit">Approve</button>
+                      </form>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Safe Browsing Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background:#f9fafb; }
+        header { background:#0d6efd; color:#fff; padding:12px 16px; }
+        .container { max-width: 900px; margin: 16px auto; background:#fff; padding: 16px; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,.06);} 
+        .q { margin: 16px 0; padding: 12px; border:1px solid #e5e7eb; border-radius: 8px; }
+        .q h3 { margin: 0 0 8px 0; }
+        .actions { display:flex; gap:12px; flex-wrap: wrap; }
+        button { padding:10px 16px; background:#0d6efd; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+        .warn { color:#b00020; font-weight:bold; }
+        @media (max-width: 600px) {
+            .container { margin: 8px; padding: 12px; }
+            .actions { flex-direction: column; }
+            button { width: 100%; }
+            .q { padding: 10px; }
+            label { display:block; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h2>Quiz is active — Safe Browsing Mode</h2>
+</header>
+<div class="container">
+    <p class="warn">Do not switch tabs or exit fullscreen. If you do, the quiz will be submitted automatically.</p>
+    <form id="quizForm" th:action="@{/quiz/submit}" method="post">
+        <div th:each="q,iter : ${questions}" class="q">
+            <h3 th:text="${iter.index + 1} + '. ' + ${q.text}"></h3>
+            <div th:each="opt,idx : ${q.options}">
+                <label>
+                    <input type="radio" th:name="${'q_' + q.id}" th:value="${idx.index}" />
+                    <span th:text="${opt}"></span>
+                </label>
+            </div>
+        </div>
+        <div class="actions">
+            <button type="submit" id="submitBtn">Submit</button>
+        </div>
+    </form>
+</div>
+<script>
+(function(){
+  const form = document.getElementById('quizForm');
+  const submitBtn = document.getElementById('submitBtn');
+  let submitted = false;
+
+  function autoSubmit(reason){
+    if (submitted) return;
+    submitted = true;
+    try { submitBtn.disabled = true; } catch(e){}
+    // Append reason for server logs (optional hidden field)
+    try {
+      const hid = document.createElement('input');
+      hid.type = 'hidden'; hid.name = 'autoReason'; hid.value = reason || 'unknown';
+      form.appendChild(hid);
+    } catch(e){}
+    form.submit();
+  }
+
+  // Request fullscreen to discourage minimizing/switching
+  async function enterFullscreen(){
+    const el = document.documentElement;
+    if (el.requestFullscreen) { await el.requestFullscreen(); }
+    else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+  }
+  enterFullscreen().catch(()=>{});
+
+  // Detect visibility/tab switch and window blur
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) {
+      autoSubmit('visibilitychange');
+    }
+  });
+  window.addEventListener('blur', function(){
+    // if window lost focus, submit
+    autoSubmit('window_blur');
+  });
+
+  // Detect exiting fullscreen
+  function onFsChange(){
+    const fs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!fs) {
+      autoSubmit('exit_fullscreen');
+    }
+  }
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+
+  // Try to block some shortcuts and context menu
+  window.addEventListener('contextmenu', e => e.preventDefault());
+  window.addEventListener('keydown', function(e){
+    // Block common shortcuts that could open new tabs/devtools
+    if (e.ctrlKey || e.metaKey) {
+      const k = e.key.toLowerCase();
+      if (['t','n','w','r','p','s','o','l'].includes(k)) { e.preventDefault(); e.stopPropagation(); }
+    }
+    if (['F11','F12','PrintScreen'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+})();
+</script>
+</body>
+</html>
