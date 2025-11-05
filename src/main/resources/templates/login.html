@@ -1,37 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login - Quiz App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Use Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; margin:0; }
-        .container { max-width: 420px; margin: 10vh auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,.08);} 
-        h1 { margin-top: 0; }
-        .error { color: #b00020; margin: 8px 0; }
-        label { display:block; margin: 12px 0 4px; }
-        input { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; }
-        button { margin-top:16px; padding:12px 16px; background:#0069d9; color:#fff; border:none; border-radius:6px; cursor:pointer; width:100%; }
-        .hint { margin-top:12px; color:#444; font-size: 0.9em; }
-        @media (max-width: 480px){
-            .container { margin: 24px 12px; padding: 16px; }
+        /* Using a clean, modern font */
+        body {
+            font-family: 'Inter', sans-serif;
         }
+        /* Fallback for Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     </style>
 </head>
-<body>
-<div class="container">
-    <h1>Login</h1>
-    <p class="hint">Login Form<br/>
+<!--
+  Body with a soft, eye-catching gradient.
+  Uses flexbox to center the login card vertically and horizontally.
+-->
+<body class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 min-h-screen flex items-center justify-center p-4">
 
-    </p>
-    <p class="error" th:if="${error}" th:text="${error}"></p>
-    <form th:action="@{/do-login}" method="post">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" required />
-        <button type="submit">Sign in</button>
+<!--
+  Main login card.
+  w-full for mobile, max-w-md for larger screens.
+  Includes rounded corners, a prominent shadow, and padding.
+-->
+<div class="container w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Welcome Back!</h1>
+        <p class="text-gray-500 mt-2">Sign in to continue to your Quiz App.</p>
+    </div>
+
+    <!--
+      Error Message Block (from Thymeleaf).
+      Styled with a red background, border, and text for high visibility.
+    -->
+    <div th:if="${error}" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg" role="alert">
+        <p th:text="${error}">Invalid username or password.</p>
+    </div>
+
+    <!-- Login Form -->
+    <form th:action="@{/do-login}" method="post" class="space-y-6">
+
+        <!-- Email Field -->
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input id="email"
+                   name="email"
+                   type="email"
+                   required
+                   class="w-full px-4 py-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                   placeholder="you@example.com" />
+        </div>
+
+        <!-- Password Field -->
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input id="password"
+                   name="password"
+                   type="password"
+                   required
+                   class="w-full px-4 py-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                   placeholder="••••••••" />
+            <!-- Optional: Add a 'Forgot Password?' link here -->
+            <!--
+            <div class="text-right mt-2">
+                <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+            </div>
+            -->
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+            <button type="submit"
+                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 shadow-lg">
+                Sign in
+            </button>
+        </div>
     </form>
+
+    <!-- Optional: Sign up link removed -->
+
 </div>
 </body>
 </html>
